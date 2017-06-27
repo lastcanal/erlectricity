@@ -18,6 +18,11 @@ context "When packing to a binary stream" do
     write_any(false).should == get_erl_with_magic("false")
   end
 
+  specify "A number to be encoded should be properly broken into bytes" do
+    @encoder.break_into_bytes(12549760679).length.should == 5
+    @encoder.break_into_bytes(12549760679).should == [167, 38, 6, 236, 2]
+  end
+
   specify "A number should be encoded as an erlang number would be" do
     #SMALL_INTS
     get{@encoder.write_fixnum 0}.should == get_erl("0")
@@ -30,6 +35,8 @@ context "When packing to a binary stream" do
     get{@encoder.write_fixnum((1 << 27) - 1)}.should == get_erl("#{(1 << 27) - 1}")
     get{@encoder.write_fixnum(-1)}.should == get_erl("-1")
     get{@encoder.write_fixnum(-(1 << 27))}.should == get_erl("#{-(1 << 27)}")
+    get{@encoder.write_fixnum(1254976067)}.should == get_erl("1254976067")
+    get{@encoder.write_fixnum(-1254976067)}.should == get_erl("-1254976067")
     write_any(256).should == get_erl_with_magic("256")
     write_any((1 << 27) - 1).should == get_erl_with_magic("#{(1 << 27) - 1}")
     write_any(-1).should == get_erl_with_magic("-1")
@@ -37,8 +44,7 @@ context "When packing to a binary stream" do
 
     # #SMALL_BIGNUMS
     get{@encoder.write_fixnum(10_000_000_000_000_000_000)}.should == get_erl("10000000000000000000")
-    get{@encoder.write_fixnum(1254976067)}.should == get_erl("1254976067")
-    get{@encoder.write_fixnum(-1254976067)}.should == get_erl("-1254976067")
+    get{@encoder.write_fixnum(12549760679)}.should == get_erl("12549760679")
     # get{@encoder.write_fixnum((1 << word_length))}.should == get_erl("#{(1 << word_length)}")
     # get{@encoder.write_fixnum(-(1 << word_length) - 1)}.should == get_erl("#{-(1 << word_length) - 1}")
     # get{@encoder.write_fixnum((1 << (255 * 8)) - 1)}.should == get_erl("#{(1 << (255 * 8)) - 1}")
