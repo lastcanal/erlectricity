@@ -1,25 +1,4 @@
-require 'rubygems'
-require 'rake'
-
-begin
-  require 'jeweler'
-  Jeweler::Tasks.new do |gem|
-    gem.name = "erlectricity"
-    gem.rubyforge_project = "erlectricity"
-    gem.summary = "A library to interface erlang and ruby through the erlang port system"
-    gem.email = "tom@mojombo.com"
-    gem.homepage = "http://github.com/mojombo/erlectricity"
-    gem.authors = ["Scott Fleckenstein", "Tom Preston-Werner"]
-    gem.require_paths = ["lib", "ext"]
-    gem.files.include("ext")
-    gem.extensions << 'ext/extconf.rb'
-
-    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
-  end
-rescue LoadError
-  puts "Jeweler not available. Install it with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"
-end
-
+=begin
 task :test do
   require 'open3'
   require 'fileutils'
@@ -42,24 +21,13 @@ task :test do
   end
 end
 
-begin
-  require 'rcov/rcovtask'
-  Rcov::RcovTask.new do |test|
-    test.libs << 'test'
-    test.pattern = 'test/**/*_test.rb'
-    test.verbose = true
-  end
-rescue LoadError
-  task :rcov do
-    abort "RCov is not available. In order to run rcov, you must: sudo gem install spicycode-rcov"
-  end
-end
-
-
 task :default => :test
+=end
 
-require 'rake/rdoctask'
+=begin
+require 'rdoc/task'
 Rake::RDocTask.new do |rdoc|
+  require 'yaml'
   if File.exist?('VERSION.yml')
     config = YAML.load(File.read('VERSION.yml'))
     version = "#{config[:major]}.#{config[:minor]}.#{config[:patch]}"
@@ -71,4 +39,11 @@ Rake::RDocTask.new do |rdoc|
   rdoc.title = "erlectricity #{version}"
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
+end
+=end
+
+require 'rake/extensiontask'
+
+Rake::ExtensionTask.new('decoder') do |ext|
+  ext.lib_dir = "lib/erlectricity"
 end
