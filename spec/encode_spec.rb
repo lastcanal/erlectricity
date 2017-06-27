@@ -1,7 +1,7 @@
-require File.dirname(__FILE__) + '/test_helper.rb'
+require 'spec_helper'
 
 context "When packing to a binary stream" do
-  setup do
+  before do
     @out = StringIO.new('', 'w')
     @encoder = Erlectricity::Encoder.new(@out)
   end

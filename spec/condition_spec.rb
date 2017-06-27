@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/test_helper.rb'
+require 'spec_helper'
 
 context "Erlectricity::StaticConditions" do
   specify "should satisfy on the same value" do

@@ -1,9 +1,6 @@
-require File.dirname(__FILE__) + '/test_helper.rb'
+require 'spec_helper'
 
 context "When unpacking from a binary stream" do
-  setup do
-  end
-
   specify "an erlang atom should decode to a ruby symbol" do
     get("haha").should == :haha
   end
@@ -50,14 +47,14 @@ context "When unpacking from a binary stream" do
 
   specify "an erlang reference should decode to a Reference object" do
     ref = get("make_ref()")
-    ref.should.be.instance_of Erlectricity::NewReference
-    ref.node.should.be.instance_of Symbol
+    expect(ref).to be_instance_of Erlectricity::NewReference
+    expect(ref.node).to be_instance_of Symbol
   end
 
   specify "an erlang pid should decode to a Pid object" do
     pid = get("spawn(fun() -> 3 end)")
-    pid.should.be.instance_of Erlectricity::Pid
-    pid.node.should.be.instance_of Symbol
+    expect(pid).to be_instance_of Erlectricity::Pid
+    expect(pid.node).to be_instance_of Symbol
   end
 
   specify "an erlang tuple encoded as a small tuple (1-byte length) should decode to an array" do
@@ -96,8 +93,8 @@ context "When unpacking from a binary stream" do
 
   specify "an erlang list encoded as a string should decode to an array of bytes (less than ideal, but consistent)" do
     get("\"asdasd\"").class.should == Erl::List
-    get("\"asdasd\"").should == "asdasd".split('').map{|c| c[0]}
-    get("\"#{'a' * 65534}\"").should == ['a'[0]] * 65534
+    get("\"asdasd\"").should == "asdasd".each_char.map(&:ord)
+    get("\"#{'a' * 65534}\"").should == ['a'.ord] * 65534
   end
 
   specify "an erlang list encoded as a list should decode to an erl::list" do
@@ -114,9 +111,7 @@ context "When unpacking from a binary stream" do
   end
 
   specify "the empty atom should decode to the empty symbol" do
-    empty_symbol = get("''")
-    empty_symbol.should.be.instance_of Symbol
-    empty_symbol.to_s.should == ""
+    expect(get("''")).to eq(:"")
   end
 
   specify "erlang atomic booleans should decode to ruby booleans" do
@@ -129,7 +124,7 @@ context "When unpacking from a binary stream" do
 
   specify "massive binaries should not overflow the stack" do
     bin = [131,109,0,128,0,0].pack('c*') + ('a' * (8 * 1024 * 1024))
-    assert_equal (8 * 1024 * 1024), Erlectricity::Decoder.decode(bin).size
+    expect(Erlectricity::Decoder.decode(bin).size).to eq(8 * 1024 * 1024)
   end
 
   specify "a good thing should be awesome" do

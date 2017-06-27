@@ -15,4 +15,5 @@ Gem::Specification.new do |s|
   s.summary = %q{A library to interface erlang and ruby through the erlang port system}
 
   s.add_development_dependency "rake-compiler"
+  s.add_development_dependency "rspec"
 end

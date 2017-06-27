@@ -1,14 +1,9 @@
-$:.unshift(File.dirname(__FILE__) + '/../lib')
-
 require 'erlectricity'
-require 'rubygems'
-require 'test/unit'
-require 'test/spec'
 require 'stringio'
 
 $stdout.sync = true
 
-class Test::Unit::TestCase
+RSpec.configure do |c|
   def run_erl(code)
     cmd = %Q{erl -noshell -eval "A = #{code.split.join(' ')}, io:put_chars(binary_to_list(A))." -s erlang halt}
     `#{cmd}`
