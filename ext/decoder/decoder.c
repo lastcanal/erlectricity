@@ -157,8 +157,8 @@ VALUE read_string(unsigned char **pData) {
   VALUE newref_class = rb_const_get(mErlectricity, rb_intern("List"));
   VALUE array = rb_funcall(newref_class, rb_intern("new"), 1, INT2NUM(length));
 
-  int i = 0;
-  for(i; i < length; ++i) {
+  int i;
+  for(i = 0; i < length; ++i) {
     rb_ary_store(array, i, INT2NUM(**pData));
     *pData += 1;
   }
@@ -203,7 +203,7 @@ VALUE read_int(unsigned char **pData) {
 
   long long value = read_4(pData);
 
-  long long negative = ((value >> 31) & 0x1 == 1);
+  long long negative = ((value >> 31) & (0x1 == 1));
 
   if(negative) {
     value = (value - ((long long) 1 << 32));
