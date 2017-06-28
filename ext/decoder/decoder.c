@@ -7,6 +7,7 @@
 #define ERL_SMALL_BIGNUM  110
 #define ERL_LARGE_BIGNUM  111
 #define ERL_FLOAT         99
+#define ERL_NEW_FLOAT     70
 #define ERL_ATOM          100
 #define ERL_REF           101
 #define ERL_NEW_REF       114
@@ -282,6 +283,23 @@ VALUE read_float(unsigned char **pData) {
   return rb_funcall(rString, rb_intern("to_f"), 0);
 }
 
+VALUE read_new_float(unsigned char **pData) {
+  if(read_1(pData) != ERL_NEW_FLOAT) {
+    rb_raise(rb_eStandardError, "Invalid Type, not a new float");
+  }
+
+  // Reverse byte order
+  char buf[8] = {0};
+  for(int i = 0; i < 8; i++) {
+    buf[7 - i] = *(*pData + i);
+  }
+
+  VALUE rFloat = DBL2NUM(*(double *) buf);
+  *pData += 8;
+  return rFloat;
+}
+
+
 VALUE read_nil(unsigned char **pData) {
   if(read_1(pData) != ERL_NIL) {
     rb_raise(rb_eStandardError, "Invalid Type, not a nil list");
@@ -338,6 +356,9 @@ VALUE read_any_raw(unsigned char **pData) {
       break;
     case ERL_FLOAT:
       return read_float(pData);
+      break;
+    case ERL_NEW_FLOAT:
+      return read_new_float(pData);
       break;
     case ERL_ATOM:
       return read_atom(pData);
