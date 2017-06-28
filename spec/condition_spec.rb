@@ -51,12 +51,12 @@ end
 
 context "Erlectricity::HashConditions" do
   specify "should satisfy an args of the form [[key, value], [key, value]]" do
-    Erlectricity::HashCondition.new.satisfies?([[:foo, 3], [:bar, Object.new]]).should == true
-    Erlectricity::HashCondition.new.satisfies?([[:foo, 3]]).should == true
+    Erlectricity::HashCondition.new.satisfies?(Erl::List.new([[:foo, 3], [:bar, Object.new]])).should == true
+    Erlectricity::HashCondition.new.satisfies?(Erl::List.new([[:foo, 3]])).should == true
   end
 
   specify "should satisfy on empty arrays" do
-    Erlectricity::HashCondition.new.satisfies?([]).should == true
+    Erlectricity::HashCondition.new.satisfies?(Erl::List.new([])).should == true
   end
 
   specify "should nat satisfy other args" do
