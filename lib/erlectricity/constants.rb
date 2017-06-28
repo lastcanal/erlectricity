@@ -29,8 +29,8 @@ module Erlectricity
 
     VERSION = 131
 
-    MAX_INT = (1 << 27) -1
-    MIN_INT = -(1 << 27)
+    MAX_INT = (1 << 31) -1
+    MIN_INT = -(1 << 31)
     MAX_ATOM = 255
   end
 end
