@@ -105,9 +105,9 @@ context "When unpacking from a binary stream" do
   end
 
   specify "an erlang binary should decode to a string" do
-    get("<< 3,4,255 >>").should == "\003\004\377"
+    get("<< 3,4,255 >>").should == "\003\004\377".force_encoding("ASCII-8BIT")
     get("<< \"whatup\" >>").should == "whatup"
-    get("<< 99,0,99 >>").should == "c\000c"
+    get("<< 99,0,99 >>").should == "c\000c".force_encoding("ASCII-8BIT")
   end
 
   specify "the empty atom should decode to the empty symbol" do
