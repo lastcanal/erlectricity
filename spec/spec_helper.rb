@@ -12,11 +12,6 @@ RSpec.configure do |c|
     `#{cmd}`
   end
 
-  def encode_packet(code)
-    bin = run_erl("term_to_binary(#{code})")
-    [bin.length, bin].pack("Na#{bin.length}")
-  end
-
   def word_length
     (1.size * 8) - 2
   end
