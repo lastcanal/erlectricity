@@ -2,47 +2,47 @@ require 'spec_helper'
 
 context "When unpacking from a binary stream" do
   specify "an erlang atom should decode to a ruby symbol" do
-    get("haha").should == :haha
+    expect(get("haha")).to eq(:haha)
   end
 
   specify "an erlang number encoded as a small_int (< 255) should decode to a fixnum" do
-    get("0").should == 0
-    get("255").should == 255
+    expect(get("0")).to eq(0)
+    expect(get("255")).to eq(255)
   end
 
   specify "an erlang number encoded as a int (signed 27-bit number) should decode to a fixnum" do
-    get("256").should == 256
-    get("#{(1 << 27) -1}").should == (1 << 27) -1
-    get("-1").should == -1
-    get("#{-(1 << 27)}").should == -(1 << 27)
+    expect(get("256")).to eq(256)
+    expect(get("#{(1 << 27) -1}")).to eq((1 << 27) -1)
+    expect(get("-1")).to eq(-1)
+    expect(get("#{-(1 << 27)}")).to eq(-(1 << 27))
   end
 
   specify "an erlang number encoded as a small bignum (1 byte length) should decode to fixnum if it can" do
-    get("#{(1 << 27)}").should == (1 << 27)
-    get("#{-(1 << 27) - 1}").should == -(1 << 27) - 1
-    get("#{(1 << word_length) - 1}").should == (1 << word_length) - 1
-    get("#{-(1 << word_length)}").should == -(1 << word_length)
+    expect(get("#{(1 << 27)}")).to eq(1 << 27)
+    expect(get("#{-(1 << 27) - 1}")).to eq(-(1 << 27) - 1)
+    expect(get("#{(1 << word_length) - 1}")).to eq((1 << word_length) - 1)
+    expect(get("#{-(1 << word_length)}")).to eq(-(1 << word_length))
   end
 
   specify "an erlang number encoded as a small bignum (1 byte length) should decode to bignum if it can't be a fixnum" do
-    get("#{(1 << word_length)}").should == (1 << word_length)
-    get("#{-(1 << word_length) - 1}").should == -(1 << word_length) - 1
-    get("#{(1 << (255 * 8)) - 1}").should == (1 << (255 * 8)) - 1
-    get("#{-((1 << (255 * 8)) - 1)}").should == -((1 << (255 * 8)) - 1)
+    expect(get("#{(1 << word_length)}")).to eq(1 << word_length)
+    expect(get("#{-(1 << word_length) - 1}")).to eq(-(1 << word_length) - 1)
+    expect(get("#{(1 << (255 * 8)) - 1}")).to eq((1 << (255 * 8)) - 1)
+    expect(get("#{-((1 << (255 * 8)) - 1)}")).to eq(-((1 << (255 * 8)) - 1))
   end
 
   specify "an erlang number encoded as a big bignum (4 byte length) should decode to bignum" do
-    get("#{(1 << (255 * 8)) }").should == (1 << (255 * 8))
-    get("#{-(1 << (255 * 8))}").should == -(1 << (255 * 8))
-    get("#{(1 << (512 * 8)) }").should == (1 << (512 * 8))
-    get("#{-(1 << (512 * 8))}").should == -(1 << (512 * 8))
+    expect(get("#{(1 << (255 * 8)) }")).to eq(1 << (255 * 8))
+    expect(get("#{-(1 << (255 * 8))}")).to eq(-(1 << (255 * 8)))
+    expect(get("#{(1 << (512 * 8)) }")).to eq(1 << (512 * 8))
+    expect(get("#{-(1 << (512 * 8))}")).to eq(-(1 << (512 * 8)))
   end
 
   specify "an erlang float should decode to a Float" do
-    get("#{1.0}").should == 1.0
-    get("#{-1.0}").should == -1.0
-    get("#{123.456}").should == 123.456
-    get("#{123.456789012345}").should == 123.456789012345
+    expect(get("#{1.0}")).to eq(1.0)
+    expect(get("#{-1.0}")).to eq(-1.0)
+    expect(get("#{123.456}")).to eq(123.456)
+    expect(get("#{123.456789012345}")).to eq(123.456789012345)
   end
 
   specify "an erlang reference should decode to a Reference object" do
@@ -59,55 +59,55 @@ context "When unpacking from a binary stream" do
 
   specify "an erlang tuple encoded as a small tuple (1-byte length) should decode to an array" do
     ref = get("{3}")
-    ref.length.should == 1
-    ref.first.should == 3
+    expect(ref.length).to eq(1)
+    expect(ref.first).to eq(3)
 
     ref = get("{3, a, make_ref()}")
-    ref.length.should == 3
-    ref[0].should == 3
-    ref[1].should == :a
-    ref[2].class.should == Erlectricity::NewReference
+    expect(ref.length).to eq(3)
+    expect(ref[0]).to eq(3)
+    expect(ref[1]).to eq(:a)
+    expect(ref[2].class).to eq(Erlectricity::NewReference)
 
     tuple_meat = (['3'] * 255).join(', ')
     ref = get("{#{tuple_meat}}")
-    ref.length.should == 255
-    ref.each{|r| r.should == 3}
+    expect(ref.length).to eq(255)
+    ref.each{|r| expect(r).to eq(3)}
   end
 
   specify "an erlang tuple encoded as a large tuple (4-byte length) should decode to an array" do
     tuple_meat = (['3'] * 256).join(', ')
     ref = get("{#{tuple_meat}}")
-    ref.length.should == 256
-    ref.each{|r| r.should == 3}
+    expect(ref.length).to eq(256)
+    ref.each{|r| expect(r).to eq(3)}
 
     tuple_meat = (['3'] * 512).join(', ')
     ref = get("{#{tuple_meat}}")
-    ref.length.should == 512
-    ref.each{|r| r.should == 3}
+    expect(ref.length).to eq(512)
+    ref.each{|r| expect(r).to eq(3)}
   end
 
   specify "an empty erlang list encoded as a nil should decode to an array" do
-    get("[]").class.should == Erl::List
-    get("[]").should == []
+    expect(get("[]").class).to eq(Erl::List)
+    expect(get("[]")).to eq([])
   end
 
   specify "an erlang list encoded as a string should decode to an array of bytes (less than ideal, but consistent)" do
-    get("\"asdasd\"").class.should == Erl::List
-    get("\"asdasd\"").should == "asdasd".each_char.map(&:ord)
-    get("\"#{'a' * 65534}\"").should == ['a'.ord] * 65534
+    expect(get("\"asdasd\"").class).to eq(Erl::List)
+    expect(get("\"asdasd\"")).to eq("asdasd".each_char.map(&:ord))
+    expect(get("\"#{'a' * 65534}\"")).to eq(['a'.ord] * 65534)
   end
 
   specify "an erlang list encoded as a list should decode to an erl::list" do
-    get("[3,4,256]").class.should == Erl::List
-    get("[3,4,256]").should == [3,4,256]
-    get("\"#{'a' * 65535 }\"").should == [97] * 65535
-    get("[3,4, foo, {3,4,5,bar}, 256]").should == [3,4, :foo, [3,4,5,:bar], 256]
+    expect(get("[3,4,256]").class).to eq(Erl::List)
+    expect(get("[3,4,256]")).to eq([3,4,256])
+    expect(get("\"#{'a' * 65535 }\"")).to eq([97] * 65535)
+    expect(get("[3,4, foo, {3,4,5,bar}, 256]")).to eq([3,4, :foo, [3,4,5,:bar], 256])
   end
 
   specify "an erlang binary should decode to a string" do
-    get("<< 3,4,255 >>").should == "\003\004\377".force_encoding("ASCII-8BIT")
-    get("<< \"whatup\" >>").should == "whatup"
-    get("<< 99,0,99 >>").should == "c\000c".force_encoding("ASCII-8BIT")
+    expect(get("<< 3,4,255 >>")).to eq("\003\004\377".force_encoding("ASCII-8BIT"))
+    expect(get("<< \"whatup\" >>")).to eq("whatup")
+    expect(get("<< 99,0,99 >>")).to eq("c\000c".force_encoding("ASCII-8BIT"))
   end
 
   specify "the empty atom should decode to the empty symbol" do
@@ -115,11 +115,11 @@ context "When unpacking from a binary stream" do
   end
 
   specify "erlang atomic booleans should decode to ruby booleans" do
-    get("true").should == true
-    get("false").should == false
-    get("falsereio").should == :falsereio
-    get("t").should == :t
-    get("f").should == :f
+    expect(get("true")).to eq(true)
+    expect(get("false")).to eq(false)
+    expect(get("falsereio")).to eq(:falsereio)
+    expect(get("t")).to eq(:t)
+    expect(get("f")).to eq(:f)
   end
 
   specify "massive binaries should not overflow the stack" do
@@ -128,8 +128,9 @@ context "When unpacking from a binary stream" do
   end
 
   specify "a good thing should be awesome" do
-    get(%Q-[{options,{struct,[{test,<<"I'm chargin' mah lazer">>}]}},{passage,<<"Why doesn't this work?">>}]-).should ==
+    expect(get(%Q-[{options,{struct,[{test,<<"I'm chargin' mah lazer">>}]}},{passage,<<"Why doesn't this work?">>}]-)).to eq(
     [[:options, [:struct, [[:test, "I'm chargin' mah lazer"]]]], [:passage, "Why doesn't this work?"]]
+    )
   end
 
   def get(str)
