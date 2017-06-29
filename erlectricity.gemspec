@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.authors = ["Scott Fleckenstein", "Tom Preston-Werner"]
   s.date = %q{2009-10-28}
   s.email = %q{tom@mojombo.com}
-  s.extensions = ["ext/extconf.rb"]
+  s.extensions = ["ext/decoder/extconf.rb"]
   s.extra_rdoc_files = ["LICENSE", "README.md"]
 
   s.files = Dir["*", "{benchmarks,examples,ext,lib,test}/**/*"]
