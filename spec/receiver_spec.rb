@@ -2,15 +2,15 @@ require 'spec_helper'
 
 def simple_receiver_and_port(*terms, &block)
   port = FakePort.new(*terms)
-  receiver = if block
-      Erlectricity::Receiver.new(port, &block)
-    else
-      Erlectricity::Receiver.new(port) do |f|
-        f.when Erl.any do
-          :matched
-        end
+  if block
+    Erlectricity::Receiver.new(port, &block)
+  else
+    Erlectricity::Receiver.new(port) do |f|
+      f.when Erl.any do
+        :matched
       end
-    end
+      end
+  end
 end
 
 context "When a receiver is passed a message that matches two match blocks it" do
