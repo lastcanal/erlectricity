@@ -7,7 +7,6 @@ require 'erlectricity/types/function'
 require 'erlectricity/types/list'
 
 require 'erlectricity/decoder'
-
 require 'erlectricity/encoder'
 
 require 'erlectricity/port'
