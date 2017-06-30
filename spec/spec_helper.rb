@@ -1,22 +1,15 @@
-$:.unshift(File.dirname(__FILE__) + '/../lib')
+require 'simplecov'
+SimpleCov.start
 
 require 'erlectricity'
-require 'rubygems'
-require 'test/unit'
-require 'test/spec'
 require 'stringio'
 
 $stdout.sync = true
 
-class Test::Unit::TestCase
+RSpec.configure do |c|
   def run_erl(code)
     cmd = %Q{erl -noshell -eval "A = #{code.split.join(' ')}, io:put_chars(binary_to_list(A))." -s erlang halt}
     `#{cmd}`
-  end
-
-  def encode_packet(code)
-    bin = run_erl("term_to_binary(#{code})")
-    [bin.length, bin].pack("Na#{bin.length}")
   end
 
   def word_length

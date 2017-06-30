@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/test_helper.rb'
+require 'spec_helper'
 
 def simple_receiver_and_port(*terms, &block)
   port = FakePort.new(*terms)
@@ -14,7 +14,7 @@ def simple_receiver_and_port(*terms, &block)
 end
 
 context "When a receiver is passed a message that matches two match blocks it" do
-  setup do
+  before do
     @port = FakePort.new([:foo, :foo])
     @receiver = Erlectricity::Receiver.new(@port) do |f|
       f.when([:foo, :foo]) do

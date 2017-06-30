@@ -1,11 +1,11 @@
-require File.dirname(__FILE__) + '/test_helper.rb'
+require 'spec_helper'
 
 def false_match(matcher, arg)
    matcher.matches?(arg).should == false
 end
 
 context "A matcher whose condition is a String (the class object" do
-  setup do
+  before do
     @matcher = Erlectricity::Matcher.new(nil, Erlectricity::TypeCondition.new(String), nil)
   end
 
@@ -19,7 +19,7 @@ context "A matcher whose condition is a String (the class object" do
 end
 
 context "A matcher whose condition is Symbol (the class object)" do
-  setup do
+  before do
     @matcher = Erlectricity::Matcher.new(nil, Erlectricity::TypeCondition.new(Symbol), nil)
   end
 
@@ -43,7 +43,7 @@ context "A matcher whose condition is Symbol (the class object)" do
 end
 
 context "a matcher whose condition is a symbol" do
-  setup do
+  before do
     @matcher = Erlectricity::Matcher.new(nil, Erlectricity::StaticCondition.new(:foo), nil)
   end
 

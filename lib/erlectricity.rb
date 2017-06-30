@@ -1,5 +1,3 @@
-$:.unshift File.join(File.dirname(__FILE__), *%w[.. ext])
-
 require 'stringio'
 
 require 'erlectricity/constants'
@@ -8,14 +6,7 @@ require 'erlectricity/types/pid'
 require 'erlectricity/types/function'
 require 'erlectricity/types/list'
 
-begin
-  # try to load the decoder C extension
-  require 'decoder'
-rescue LoadError
-  # fall back on the pure ruby version
-  require 'erlectricity/decoder'
-end
-
+require 'erlectricity/decoder'
 require 'erlectricity/encoder'
 
 require 'erlectricity/port'

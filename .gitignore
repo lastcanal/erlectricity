@@ -1,7 +1,9 @@
+coverage
+tmp
 pkg
-ext/Makefile
-ext/decoder.bundle
-ext/decoder.o
+lib/erlectricity/decoder.bundle
+lib/erlectricity/decoder.o
 *.beam
 *.dump
 .DS_Store
+Gemfile.lock
