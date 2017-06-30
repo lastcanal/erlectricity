@@ -1,0 +1,17 @@
+branches:
+  only:
+    - master
+
+language: ruby
+rvm:
+  - 2.2
+  - 2.3
+  - 2.4
+  - ruby-head
+
+before_install:
+  - erl -eval 'io:format("Erlang ~s, ~s", [erlang:system_info(otp_release), erlang:system_info(version)]), halt().' -noshell
+
+matrix:
+  allow_failures:
+    - rvm: ruby-head

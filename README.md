@@ -1,5 +1,6 @@
 Erlectricity
 ============
+[![Build Status Master](https://travis-ci.org/chef/erlectricity.svg?branch=master)](https://travis-ci.org/chef/erlectricity)
 
 http://github.com/mojombo/erlectricity
 
