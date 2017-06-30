@@ -7,44 +7,44 @@ context "When packing to a binary stream" do
   end
 
   specify "A symbol should be encoded to an erlang atom" do
-    get{@encoder.write_symbol :haha}.should == get_erl("haha")
-    write_any(:haha).should == get_erl_with_magic("haha")
+    expect(get{@encoder.write_symbol :haha}).to eq(get_erl("haha"))
+    expect(write_any(:haha)).to eq(get_erl_with_magic("haha"))
   end
 
   specify "A boolean should be encoded to an erlang atom" do
-    get{@encoder.write_boolean true}.should == get_erl("true")
-    get{@encoder.write_boolean false}.should == get_erl("false")
-    write_any(true).should == get_erl_with_magic("true")
-    write_any(false).should == get_erl_with_magic("false")
+    expect(get{@encoder.write_boolean true}).to eq(get_erl("true"))
+    expect(get{@encoder.write_boolean false}).to eq(get_erl("false"))
+    expect(write_any(true)).to eq(get_erl_with_magic("true"))
+    expect(write_any(false)).to eq(get_erl_with_magic("false"))
   end
 
   specify "A number to be encoded should be properly broken into bytes" do
-    @encoder.break_into_bytes(12549760679).length.should == 5
-    @encoder.break_into_bytes(12549760679).should == [167, 38, 6, 236, 2]
+    expect(@encoder.break_into_bytes(12549760679).length).to eq(5)
+    expect(@encoder.break_into_bytes(12549760679)).to eq([167, 38, 6, 236, 2])
   end
 
   specify "A number should be encoded as an erlang number would be" do
     #SMALL_INTS
-    get{@encoder.write_fixnum 0}.should == get_erl("0")
-    get{@encoder.write_fixnum 255}.should == get_erl("255")
-    write_any(0).should == get_erl_with_magic("0")
-    write_any(255).should == get_erl_with_magic("255")
+    expect(get{@encoder.write_fixnum 0}).to eq(get_erl("0"))
+    expect(get{@encoder.write_fixnum 255}).to eq(get_erl("255"))
+    expect(write_any(0)).to eq(get_erl_with_magic("0"))
+    expect(write_any(255)).to eq(get_erl_with_magic("255"))
 
     #INTS
-    get{@encoder.write_fixnum 256}.should == get_erl("256")
-    get{@encoder.write_fixnum((1 << 27) - 1)}.should == get_erl("#{(1 << 27) - 1}")
-    get{@encoder.write_fixnum(-1)}.should == get_erl("-1")
-    get{@encoder.write_fixnum(-(1 << 27))}.should == get_erl("#{-(1 << 27)}")
-    get{@encoder.write_fixnum(1254976067)}.should == get_erl("1254976067")
-    get{@encoder.write_fixnum(-1254976067)}.should == get_erl("-1254976067")
-    write_any(256).should == get_erl_with_magic("256")
-    write_any((1 << 27) - 1).should == get_erl_with_magic("#{(1 << 27) - 1}")
-    write_any(-1).should == get_erl_with_magic("-1")
-    write_any(-(1 << 27)).should == get_erl_with_magic("#{-(1 << 27)}")
+    expect(get{@encoder.write_fixnum 256}).to eq(get_erl("256"))
+    expect(get{@encoder.write_fixnum((1 << 27) - 1)}).to eq(get_erl("#{(1 << 27) - 1}"))
+    expect(get{@encoder.write_fixnum(-1)}).to eq(get_erl("-1"))
+    expect(get{@encoder.write_fixnum(-(1 << 27))}).to eq(get_erl("#{-(1 << 27)}"))
+    expect(get{@encoder.write_fixnum(1254976067)}).to eq(get_erl("1254976067"))
+    expect(get{@encoder.write_fixnum(-1254976067)}).to eq(get_erl("-1254976067"))
+    expect(write_any(256)).to eq(get_erl_with_magic("256"))
+    expect(write_any((1 << 27) - 1)).to eq(get_erl_with_magic("#{(1 << 27) - 1}"))
+    expect(write_any(-1)).to eq(get_erl_with_magic("-1"))
+    expect(write_any(-(1 << 27))).to eq(get_erl_with_magic("#{-(1 << 27)}"))
 
     # #SMALL_BIGNUMS
-    get{@encoder.write_fixnum(10_000_000_000_000_000_000)}.should == get_erl("10000000000000000000")
-    get{@encoder.write_fixnum(12549760679)}.should == get_erl("12549760679")
+    expect(get{@encoder.write_fixnum(10_000_000_000_000_000_000)}).to eq(get_erl("10000000000000000000"))
+    expect(get{@encoder.write_fixnum(12549760679)}).to eq(get_erl("12549760679"))
     # get{@encoder.write_fixnum((1 << word_length))}.should == get_erl("#{(1 << word_length)}")
     # get{@encoder.write_fixnum(-(1 << word_length) - 1)}.should == get_erl("#{-(1 << word_length) - 1}")
     # get{@encoder.write_fixnum((1 << (255 * 8)) - 1)}.should == get_erl("#{(1 << (255 * 8)) - 1}")
@@ -57,8 +57,8 @@ context "When packing to a binary stream" do
     #
     # #LARGE_BIGNUMS
     x = 1254976067 ** 256
-    get{@encoder.write_fixnum(x)}.should == get_erl("#{x}")
-    get{@encoder.write_fixnum(-x)}.should == get_erl("-#{x}")
+    expect(get{@encoder.write_fixnum(x)}).to eq(get_erl("#{x}"))
+    expect(get{@encoder.write_fixnum(-x)}).to eq(get_erl("-#{x}"))
     # get{@encoder.write_fixnum((1 << (255 * 8)))}.should == get_erl("#{(1 << (255 * 8))}")
     # get{@encoder.write_fixnum(-(1 << (255 * 8))}.should == get_erl("#{-(1 << (255 * 8)}")
     # get{@encoder.write_fixnum((1 << (512 * 8))}.should == get_erl("#{(1 << (512 * 8))}")
@@ -81,53 +81,53 @@ context "When packing to a binary stream" do
     ref_bin = run_erl("term_to_binary(make_ref())")
     ruby_ref = Erlectricity::Decoder.decode(ref_bin)
 
-    get{@encoder.write_new_reference(ruby_ref)}.should == ref_bin[1..-1]
-    write_any(ruby_ref).should == ref_bin
+    expect(get{@encoder.write_new_reference(ruby_ref)}).to eq(ref_bin[1..-1])
+    expect(write_any(ruby_ref)).to eq(ref_bin)
   end
 
   specify "An Erlectiricity::Pid should encode back to its original form" do
     pid_bin = run_erl("term_to_binary(spawn(fun() -> 3 end))")
     ruby_pid = Erlectricity::Decoder.decode(pid_bin)
 
-    get{@encoder.write_pid(ruby_pid)}.should == pid_bin[1..-1]
-    write_any(ruby_pid).should == pid_bin
+    expect(get{@encoder.write_pid(ruby_pid)}).to eq(pid_bin[1..-1])
+    expect(write_any(ruby_pid)).to eq(pid_bin)
   end
 
   specify "An array written with write_tuple should encode as erlang would a tuple" do
-    get{@encoder.write_tuple [1,2,3]}.should == get_erl("{1,2,3}")
-    get{@encoder.write_tuple [3] * 255}.should == get_erl("{#{([3] * 255).join(',')}}")
-    get{@encoder.write_tuple [3] * 256}.should == get_erl("{#{([3] * 256).join(',')}}")
-    get{@encoder.write_tuple [3] * 512}.should == get_erl("{#{([3] * 512).join(',')}}")
+    expect(get{@encoder.write_tuple [1,2,3]}).to eq(get_erl("{1,2,3}"))
+    expect(get{@encoder.write_tuple [3] * 255}).to eq(get_erl("{#{([3] * 255).join(',')}}"))
+    expect(get{@encoder.write_tuple [3] * 256}).to eq(get_erl("{#{([3] * 256).join(',')}}"))
+    expect(get{@encoder.write_tuple [3] * 512}).to eq(get_erl("{#{([3] * 512).join(',')}}"))
   end
 
   specify "An array should by default be written as a tuple" do
-    write_any([1,2,3]).should == get_erl_with_magic("{1,2,3}")
-    write_any([3] * 255).should == get_erl_with_magic("{#{([3] * 255).join(',')}}")
-    write_any([3] * 256).should == get_erl_with_magic("{#{([3] * 256).join(',')}}")
-    write_any([3] * 512).should == get_erl_with_magic("{#{([3] * 512).join(',')}}")
+    expect(write_any([1,2,3])).to eq(get_erl_with_magic("{1,2,3}"))
+    expect(write_any([3] * 255)).to eq(get_erl_with_magic("{#{([3] * 255).join(',')}}"))
+    expect(write_any([3] * 256)).to eq(get_erl_with_magic("{#{([3] * 256).join(',')}}"))
+    expect(write_any([3] * 512)).to eq(get_erl_with_magic("{#{([3] * 512).join(',')}}"))
   end
 
   specify "An Erlectricity::List should by default be written as a list" do
-    write_any(Erl::List.new([1,2,300])).should == get_erl_with_magic("[1,2,300]")
-    write_any(Erl::List.new([300] * 255)).should == get_erl_with_magic("[#{([300] * 255).join(',')}]")
-    write_any(Erl::List.new([300] * 256)).should == get_erl_with_magic("[#{([300] * 256).join(',')}]")
-    write_any(Erl::List.new([300] * 512)).should == get_erl_with_magic("[#{([300] * 512).join(',')}]")
+    expect(write_any(Erl::List.new([1,2,300]))).to eq(get_erl_with_magic("[1,2,300]"))
+    expect(write_any(Erl::List.new([300] * 255))).to eq(get_erl_with_magic("[#{([300] * 255).join(',')}]"))
+    expect(write_any(Erl::List.new([300] * 256))).to eq(get_erl_with_magic("[#{([300] * 256).join(',')}]"))
+    expect(write_any(Erl::List.new([300] * 512))).to eq(get_erl_with_magic("[#{([300] * 512).join(',')}]"))
   end
 
   specify "An array written with write_list should encode as erlang would a list" do
-    get{@encoder.write_list [1,2,300]}.should == get_erl("[1,2,300]")
-    get{@encoder.write_list [300] * 255}.should == get_erl("[#{([300] * 255).join(',')}]")
-    get{@encoder.write_list [300] * 256}.should == get_erl("[#{([300] * 256).join(',')}]")
-    get{@encoder.write_list [300] * 512}.should == get_erl("[#{([300] * 512).join(',')}]")
+    expect(get{@encoder.write_list [1,2,300]}).to eq(get_erl("[1,2,300]"))
+    expect(get{@encoder.write_list [300] * 255}).to eq(get_erl("[#{([300] * 255).join(',')}]"))
+    expect(get{@encoder.write_list [300] * 256}).to eq(get_erl("[#{([300] * 256).join(',')}]"))
+    expect(get{@encoder.write_list [300] * 512}).to eq(get_erl("[#{([300] * 512).join(',')}]"))
   end
 
   specify "a string should be encoded as a erlang binary would be" do
-    get{@encoder.write_binary "hey who"}.should == get_erl("<< \"hey who\" >>")
-    get{@encoder.write_binary ""}.should == get_erl("<< \"\" >>")
-    get{@encoder.write_binary "c\000c"}.should == get_erl("<< 99,0,99 >>")
+    expect(get{@encoder.write_binary "hey who"}).to eq(get_erl("<< \"hey who\" >>"))
+    expect(get{@encoder.write_binary ""}).to eq(get_erl("<< \"\" >>"))
+    expect(get{@encoder.write_binary "c\000c"}).to eq(get_erl("<< 99,0,99 >>"))
 
-    write_any("hey who").should == get_erl_with_magic("<< \"hey who\" >>")
-    write_any("").should == get_erl_with_magic("<< \"\" >>")
+    expect(write_any("hey who")).to eq(get_erl_with_magic("<< \"hey who\" >>"))
+    expect(write_any("")).to eq(get_erl_with_magic("<< \"\" >>"))
   end
 
   def get
