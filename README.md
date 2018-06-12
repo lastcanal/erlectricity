@@ -99,6 +99,10 @@ Data Type Conversions and Matching
     f.when([:hash, Erl.hash]) { |hash| p hash }
     # {:key=>:val}
 
+    send(Port, {map, #{key => val}}).
+    f.when([:hash, Hash]) { |hash| p hash }
+    # {:key=>:val}
+
     send(Port, {object, {1,{2},3,<<"four">>}}).
     f.when([:object, Any]) { |any| p any }
     # [1, [2], 3, "four"]

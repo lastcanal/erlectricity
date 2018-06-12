@@ -28,12 +28,14 @@ context "Erlectricity::TypeConditions" do
     expect(Erlectricity::TypeCondition.new(String).satisfies?("bar")).to eq(true)
     expect(Erlectricity::TypeCondition.new(Array).satisfies?([])).to eq(true)
     expect(Erlectricity::TypeCondition.new(Fixnum).satisfies?(3)).to eq(true)
+    expect(Erlectricity::TypeCondition.new(Hash).satisfies?({foo: 3})).to eq(true)
   end
 
   specify "should be satisfied when the arg is of a descendent class" do
     expect(Erlectricity::TypeCondition.new(Object).satisfies?(:foo)).to eq(true)
     expect(Erlectricity::TypeCondition.new(Object).satisfies?("foo")).to eq(true)
     expect(Erlectricity::TypeCondition.new(Object).satisfies?(3)).to eq(true)
+    expect(Erlectricity::TypeCondition.new(Object).satisfies?({foo: 3})).to eq(true)
   end
 
   specify "should not be satisfied when the arg is of a different class" do
@@ -68,5 +70,10 @@ context "Erlectricity::HashConditions" do
   specify "should bind to a Hash" do
     s = Erlectricity::HashCondition.new()
     expect(s.binding_for([[:foo, 3], [:bar, [3,4,5]]])).to eq({:foo => 3, :bar => [3,4,5] })
+  end
+
+  specify "should bind to a Ruby Hash" do
+    s = Erlectricity::HashCondition.new()
+    expect(s.binding_for({:foo => 3, :bar => [3,4,5]})).to eq({:foo => 3, :bar => [3,4,5] })
   end
 end

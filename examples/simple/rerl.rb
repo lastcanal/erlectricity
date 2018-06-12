@@ -106,6 +106,14 @@ receive do |f|
     f.send!([:object, obj])
     f.receive_loop
   end
-  
+
+  f.when([:map, Hash]) do |hash|
+    newhash = hash.dup
+    newhash[:ruby] = :true
+    debug(:map, hash, newhash)
+    f.send!([:map, newhash])
+    f.receive_loop
+  end
+
   f.send!(:i_am_alive)
 end

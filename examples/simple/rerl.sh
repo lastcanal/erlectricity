@@ -31,7 +31,8 @@ process(Port, i_am_alive) ->
   send(Port, {array, [1,2,3]}),
   send(Port, {array, [<<"abc">>, <<"cde">>]}),
   send(Port, {hash, [{key,val}]}),
-  send(Port, {object, {1,{2},3,<<"four">>}});
+  send(Port, {object, {1,{2},3,<<"four">>}}),
+  send(Port, {map, #{key => val}});
 
 process(Port, Data) ->
   io:format("[erlang] received: ~p~n", [Data]).

@@ -18,6 +18,7 @@
 #define ERL_NIL           106
 #define ERL_STRING        107
 #define ERL_LIST          108
+#define ERL_MAP           116
 #define ERL_BIN           109
 #define ERL_FUN           117
 #define ERL_NEW_FUN       112
@@ -344,6 +345,22 @@ VALUE read_new_reference(unsigned char **pData) {
   return rb_funcall(newref_class, rb_intern("new"), 3, node, creation, id);
 }
 
+VALUE read_map(unsigned char **pData) {
+  if(read_1(pData) != ERL_MAP) {
+    rb_raise(rb_eStandardError, "Invalid Type, not a map");
+  }
+
+  unsigned int size = read_4(pData);
+  VALUE hash = rb_hash_new();
+
+  int i;
+  for(i = 0; i < size; ++i) {
+    rb_hash_aset(hash, read_any_raw(pData), read_any_raw(pData));
+  }
+
+  return hash;
+}
+
 // read_any_raw
 
 VALUE read_any_raw(unsigned char **pData) {
@@ -393,7 +410,11 @@ VALUE read_any_raw(unsigned char **pData) {
     case ERL_NEW_REF:
       return read_new_reference(pData);
       break;
+    case ERL_MAP:
+      return read_map(pData);
+      break;
   }
+
   return Qnil;
 }
 

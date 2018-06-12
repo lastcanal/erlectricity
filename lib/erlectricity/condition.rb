@@ -51,6 +51,10 @@ module Erlectricity
       TypeCondition.new(Array)
     end
 
+    def map
+      TypeCondition.new(Hash)
+    end
+
     def hash
       HashCondition.new()
     end

@@ -133,6 +133,12 @@ context "When unpacking from a binary stream" do
     )
   end
 
+  specify "an erlang map should decode to a ruby hash" do
+    expect(get(%Q-\#{options => \#{struct => \#{{1,2,3} => <<"I'm chargin' mah lazer">>}}, <<"passage">> => <<"Why doesn't this work?">>}-)).to eq(
+      {:options => {:struct => {[1,2,3] => "I'm chargin' mah lazer"}}, "passage" => "Why doesn't this work?"}
+    )
+  end
+
   def get(str)
     x = "term_to_binary(#{str.gsub(/"/, '\\\"')})"
     bin = run_erl(x)

@@ -22,6 +22,7 @@ module Erlectricity
       STRING = 107
       LIST = 108
       BIN = 109
+      MAP = 116
 
       FUN = 117
       NEW_FUN = 112

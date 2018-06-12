@@ -31,6 +31,7 @@ module Erlectricity
         when String then write_binary(obj)
         when Time then write_any_raw(obj.to_i.divmod(1000000) + [obj.usec])
         when TrueClass, FalseClass then write_boolean(obj)
+        when Hash then write_hash(obj)
         else
           fail(obj)
       end
@@ -152,6 +153,16 @@ module Erlectricity
       write_1 BIN
       write_4 data.length
       write_string data
+    end
+
+    def write_hash(data)
+      fail(data) unless data.is_a? Hash
+      write_1 MAP
+      write_4 data.length
+      data.each_pair do |key, value|
+        write_any_raw key
+        write_any_raw value
+      end
     end
 
     private

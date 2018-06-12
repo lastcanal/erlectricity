@@ -130,6 +130,16 @@ context "When packing to a binary stream" do
     expect(write_any("")).to eq(get_erl_with_magic("<< \"\" >>"))
   end
 
+  specify "a hash should be encoded as a erlang map would be" do
+    expect(get{@encoder.write_hash({:options => {:struct => {[1,2,3] => "I'm chargin' mah lazer"}}, "passage" => "Why doesn't this work?"})}).to eq(
+      get_erl(%Q-\#{options => \#{struct => \#{{1,2,3} => <<"I'm chargin' mah lazer">>}}, <<"passage">> => <<"Why doesn't this work?">>}-))
+  end
+
+  specify "an empty hash should be encoded as a erlang map would be" do
+    expect(get{@encoder.write_hash({})}).to eq(
+      get_erl(%Q-\#{}-))
+  end
+
   def get
     @encoder.out = StringIO.new('', 'w')
     yield
